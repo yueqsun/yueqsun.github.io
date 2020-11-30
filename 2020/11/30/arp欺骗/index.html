@@ -27,15 +27,15 @@
 <meta property="og:site_name" content="f1oat&#39;s blog">
 <meta property="og:description" content="同局域网下arp欺骗攻击">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://example.com/image/ip1.png">
-<meta property="og:image" content="http://example.com/image/ip2.png">
+<meta property="og:image" content="http://example.com/image/ip01.png">
+<meta property="og:image" content="http://example.com/image/ip02.png">
 <meta property="og:image" content="http://example.com/image/exa.png">
 <meta property="og:image" content="http://example.com/image/exa2.png">
 <meta property="article:published_time" content="2020-11-30T09:40:37.000Z">
-<meta property="article:modified_time" content="2020-11-30T10:38:07.871Z">
+<meta property="article:modified_time" content="2020-11-30T11:01:19.780Z">
 <meta property="article:author" content="f1oat">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/image/ip1.png">
+<meta name="twitter:image" content="http://example.com/image/ip01.png">
 
 <link rel="canonical" href="http://example.com/2020/11/30/arp%E6%AC%BA%E9%AA%97/">
 
@@ -189,7 +189,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2020-11-30 17:40:37 / Modified: 18:38:07" itemprop="dateCreated datePublished" datetime="2020-11-30T17:40:37+08:00">2020-11-30</time>
+              <time title="Created: 2020-11-30 17:40:37 / Modified: 19:01:19" itemprop="dateCreated datePublished" datetime="2020-11-30T17:40:37+08:00">2020-11-30</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -219,7 +219,7 @@
 <h3 id="arp的攻击方式"><a href="#arp的攻击方式" class="headerlink" title="arp的攻击方式"></a>arp的攻击方式</h3><ol>
 <li>最常见的攻击方式-断网攻击，攻击者向受害者机器发送arp包，假设网关的ip为1.1.1.1，受害者机器ip为5.5.5.5，攻击机向受害者发送arp包，将受害者机器的arp表中的网关指向2.2.2.2使其数据无法经过网关转发出去，造成无法访问外网</li>
 <li>arp截取攻击，攻击者向受害者主机发送arp包，更新受害者的arp表，将网关地址改成攻击机地址，用于接收受害者发送的数据，可以通过此法获取各种帐号密码</li>
-<li>欺骗网关，向网关发送arp包，将网关的arp更新，把受害者5.5.5.5的主机的mac更换成攻击机的mac地址，使得受害者无法接收网关转发给自己的数据<h3 id="arp攻击演示"><a href="#arp攻击演示" class="headerlink" title="arp攻击演示"></a>arp攻击演示</h3>实验环境:<br>虚拟机kali linux(不限，攻击机),物理主机windows10(受害者机器),将虚拟机和物理主机设置成同一网段下,虚拟机使用桥接模式<br><img src="/image/ip1.png" alt="ip1"><br><img src="/image/ip2.png" alt="ip2"></li>
+<li>欺骗网关，向网关发送arp包，将网关的arp更新，把受害者5.5.5.5的主机的mac更换成攻击机的mac地址，使得受害者无法接收网关转发给自己的数据<h3 id="arp攻击演示"><a href="#arp攻击演示" class="headerlink" title="arp攻击演示"></a>arp攻击演示</h3>实验环境:<br>虚拟机kali linux(不限，攻击机),物理主机windows10(受害者机器),将虚拟机和物理主机设置成同一网段下,虚拟机使用桥接模式<br><img src="/image/ip01.png" alt="ip1"><br><img src="/image/ip02.png" alt="ip"></li>
 </ol>
 <hr>
 <p>使用github现成脚本进行断网攻击</p>
